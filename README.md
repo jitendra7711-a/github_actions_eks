@@ -8,12 +8,14 @@
 # 3. Create new ecr repository in aws : git-repo (you can give any name)
 
 # 4. Create eks-server and install kubectl and eksctl
+```yml
 ssh-keygen
 aws-configure
 eksctl create cluster --name my-cluster --region ap-southeast-1 --version 1.29 --vpc-public-subnets subnet-044c44fef8814b390,subnet-065909e8f402e86a7 --node-type t2.micro --nodes-min 2 --ssh-access --ssh-public-key /root/.ssh/id_rsa.pub
 mkdir manifest
 cd manifest
 vim deployment.yml
+```
 
 # For deployment.yml paste:
 
