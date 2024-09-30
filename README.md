@@ -1,4 +1,4 @@
-B 1. Create a developer server, add ssh key to the github account, clone project files, push files to the repository.
+ 1. Create a developer server, add ssh key to the github account, clone project files, push files to the repository.
 
  2. Create Access-Secret key for AWS policies Go to repository settings > secrets and variables > actions >
 
