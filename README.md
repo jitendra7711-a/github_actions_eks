@@ -182,5 +182,5 @@ jobs:
     
         kubectl apply -f regapp-deploy.yml
         kubectl apply -f regapp-service.yml
-```
+```   // kubectl rollout restart deployment/regapp-deployment (for automation use this command and remove abaove commands)
 and run the file
