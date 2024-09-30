@@ -60,7 +60,7 @@
 ```yml
 vim deployment.yml
 ```
-
+## no need to create this file if they are already thier in your github repo
  ### For deployment.yml paste:
 ```yml
 apiVersion: apps/v1
