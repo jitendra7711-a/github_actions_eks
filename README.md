@@ -74,70 +74,69 @@ In github repository create .github/workflows/deploy.yml and paste:
 
 name: Deploy to ECR
 
-on: 
+on:
+ 
   push:
     branches: [ main ]
 
 env:
-  ECR_REPOSITORY: mansi-30
-  EKS_CLUSTER_NAME: my-cluster
-  AWS_REGION: ap-southeast-1
+  ECR_REPOSITORY: git-repo
+  EKS_CLUSTER_NAME: jitendra-cluster 
+  AWS_REGION: ap-south-1
 
 jobs:
+  
   build:
+    
     name: Deployment
     runs-on: ubuntu-latest
 
     steps:
 
-    - name: Set short commit SHA
+    - name: Set short git commit SHA
       id: commit
       uses: prompt/actions-commit-hash@v2
 
     - name: Check out code
       uses: actions/checkout@v2
-
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+    
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
-      with: 
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
-
-    - name: Set up JDK 14
-      uses: actions/setup-java@v1
       with:
-        java-version: 14
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{env.AWS_REGION}}
 
-    - name: Build project with Maven
-      run: mvn -B package --file pom.xml
-
-    - name: Login to amazon ECR
+    - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag and Push
-      id: build-image
+    - name: Build, tag, and push image to Amazon ECR
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
-        IMAGE_TAG: "latest"
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}        
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        echo "Pushing image to ECR..."
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
     - name: Update kube config
       run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
 
     - name: Deploy to EKS
-      env: 
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}        
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
-        kubectl rollout restart deployment/my-app1
-        kubectl apply -f deployment.yml
-        kubectl apply -f service.yml
+    
+        kubectl apply -f regapp-deploy.yml
+        kubectl apply -f regapp-service.yml
 ```
 and run the file
