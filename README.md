@@ -1,13 +1,13 @@
-# 1. Create a developer server, add ssh key to the github account, clone project files, push files to the repository.
+B 1. Create a developer server, add ssh key to the github account, clone project files, push files to the repository.
 
-# 2. Create Access-Secret key for AWS policies Go to repository settings > secrets and variables > actions >
+ 2. Create Access-Secret key for AWS policies Go to repository settings > secrets and variables > actions >
 
 ![image](https://github.com/user-attachments/assets/14c59c5f-26e3-4698-b7bd-6afb124dcd8c)
 
 
-# 3. Create new ecr repository in aws : git-repo (you can give any name)
+ 3. Create new ecr repository in aws : git-repo (you can give any name)
 
-# 4. Create eks-server and install kubectl and eksctl
+ 4. Create eks-server and install kubectl and eksctl
 ```yml
 ssh-keygen
 aws-configure
@@ -17,8 +17,8 @@ cd manifest
 vim deployment.yml
 ```
 
-# For deployment.yml paste:
-
+ For deployment.yml paste:
+```yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -47,11 +47,12 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-
+```
+```yml
 # vim service.yml
-
-# 5. For service.yml paste:
-
+```
+5. For service.yml paste:
+```yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -67,8 +68,10 @@ spec:
       targetPort: 8080
 
   type: LoadBalancer
+```
+In github repository create .github/workflows/deploy.yml and paste:
+```yml
 
-# In github repository create .github/workflows/deploy.yml and paste:
 name: Deploy to ECR
 
 on: 
@@ -136,4 +139,5 @@ jobs:
         kubectl rollout restart deployment/my-app1
         kubectl apply -f deployment.yml
         kubectl apply -f service.yml
+```
 and run the file
