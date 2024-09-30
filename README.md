@@ -1,16 +1,16 @@
- 1. Create a developer server, add ssh key to the github account, clone project files, push files to the repository.
+### 1. Create a developer server, add ssh key to the github account, clone project files, push files to the repository.
 
- 2. Create Access-Secret key for AWS policies Go to repository settings > secrets and variables > actions >
+ ### 2. Create Access-Secret key for AWS policies Go to repository settings > secrets and variables > actions >
 
 ![image](https://github.com/user-attachments/assets/14c59c5f-26e3-4698-b7bd-6afb124dcd8c)
 
 
- 3. Create new ecr repository in aws : git-repo (you can give any name)
+### 3. Create new ecr repository in aws : git-repo (you can give any name)
 
- 4. Create eks-server and install kubectl and eksctl
-## *EKS-Cluster*
+### 4. Create eks-server and install kubectl and eksctl
+## 5. *EKS-Cluster*
 
-### *Create an EC2 instance EKS-mgr   Ubuntu t2.micro All traffic 1x10*
+###  *Create an EC2 instance EKS-mgr   Ubuntu t2.micro All traffic 1x10*
 ### *Then create a role and give full access to Elasticcontainer full access ,amazonekscluster policy and IAM full*
 ### *unzip file*
  - apt install unzip -y
@@ -58,11 +58,10 @@
     (*Change the region here*)
 
 ```yml
-
-### *vim deployment.yml*
+vim deployment.yml
 ```
 
- For deployment.yml paste:
+ ### For deployment.yml paste:
 ```yml
 apiVersion: apps/v1
 kind: Deployment
@@ -96,7 +95,7 @@ spec:
 ```yml
 # vim service.yml
 ```
-5. For service.yml paste:
+### 6. For service.yml paste:
 ```yml
 apiVersion: v1
 kind: Service
@@ -114,7 +113,7 @@ spec:
 
   type: LoadBalancer
 ```
-In github repository create .github/workflows/deploy.yml and paste:
+### 7.In github repository create .github/workflows/deploy.yml and paste:
 ```yml
 
 name: Deploy to ECR
