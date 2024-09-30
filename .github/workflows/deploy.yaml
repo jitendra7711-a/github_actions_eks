@@ -54,5 +54,5 @@ jobs:
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
     
-        kubectl apply -f deployment.yml
-        kubectl apply -f service.yml
+        kubectl apply -f /deployment.yml
+        kubectl apply -f /service.yml
