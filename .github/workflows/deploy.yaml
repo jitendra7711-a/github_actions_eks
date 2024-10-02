@@ -12,8 +12,7 @@ env:
 
   ECR_REPOSITORY: git-repo
 
-  EKS_CLUSTER_NAME: MyECSCluster1
- 
+  EKS_CLUSTER_NAME: jitendra-cluster 
 
   AWS_REGION: ap-south-1
  
@@ -61,7 +60,7 @@ jobs:
 
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
 
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
         aws-region: ${{env.AWS_REGION}}
  
@@ -85,6 +84,21 @@ jobs:
 
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
  
-    
+    - name: Update kube config
+
+      run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
  
-    
+    - name: Deploy to EKS
+
+      env:
+
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}        
+
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
+
+      run: |
+
+        kubectl apply -f regapp-deploy.yml
+
+        kubectl apply -f regapp-service.yml
+ 
